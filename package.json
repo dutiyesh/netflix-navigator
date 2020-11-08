@@ -1,7 +1,7 @@
 {
   "name": "netflix-navigator",
   "version": "0.1.0",
-  "description": "My Chrome Extension",
+  "description": "Browsing Netflix made easy.",
   "private": true,
   "scripts": {
     "watch": "webpack --mode=development --watch --config config/webpack.config.js",
@@ -19,5 +19,8 @@
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-merge": "^5.3.0"
+  },
+  "dependencies": {
+    "tinykeys": "^1.1.1"
   }
 }

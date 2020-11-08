@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Netflix Navigator",
   "version": "0.1.0",
-  "description": "My Chrome Extension",
+  "description": "Browse unlimited Netflix TV Shows and Movies easily with your Keyboard Arrow Keys.",
   "icons": {
     "16": "icons/icon_16.png",
     "32": "icons/icon_32.png",
@@ -13,16 +13,17 @@
     "scripts": ["background.js"],
     "persistent": false
   },
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   "browser_action": {
     "default_title": "Netflix Navigator",
     "default_popup": "popup.html"
   },
-  "permissions": ["storage"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "run_at": "document_idle",
-      "js": ["contentScript.js"]
+      "matches": ["https://www.netflix.com/*"],
+      "run_at": "document_end",
+      "js": ["contentScript.js"],
+      "css": ["contentScript.css"]
     }
   ]
 }
