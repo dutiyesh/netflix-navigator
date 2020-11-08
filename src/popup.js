@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-import './popup.css';
+import "./popup.css";
 
-(function() {
+(function () {
   // We will make use of Storage API to get and store `count` value
   // More information on Storage API can we found at
   // https://developer.chrome.com/extensions/storage
@@ -11,8 +11,8 @@ import './popup.css';
   // More information on Permissions can we found at
   // https://developer.chrome.com/extensions/declare_permissions
   const counterStorage = {
-    get: cb => {
-      chrome.storage.sync.get(['count'], result => {
+    get: (cb) => {
+      chrome.storage.sync.get(["count"], (result) => {
         cb(result.count);
       });
     },
@@ -29,51 +29,51 @@ import './popup.css';
   };
 
   function setupCounter(initialValue = 0) {
-    document.getElementById('counter').innerHTML = initialValue;
+    document.getElementById("counter").innerHTML = initialValue;
 
-    document.getElementById('incrementBtn').addEventListener('click', () => {
+    document.getElementById("incrementBtn").addEventListener("click", () => {
       updateCounter({
-        type: 'INCREMENT',
+        type: "INCREMENT",
       });
     });
 
-    document.getElementById('decrementBtn').addEventListener('click', () => {
+    document.getElementById("decrementBtn").addEventListener("click", () => {
       updateCounter({
-        type: 'DECREMENT',
+        type: "DECREMENT",
       });
     });
   }
 
   function updateCounter({ type }) {
-    counterStorage.get(count => {
+    counterStorage.get((count) => {
       let newCount;
 
-      if (type === 'INCREMENT') {
+      if (type === "INCREMENT") {
         newCount = count + 1;
-      } else if (type === 'DECREMENT') {
+      } else if (type === "DECREMENT") {
         newCount = count - 1;
       } else {
         newCount = count;
       }
 
       counterStorage.set(newCount, () => {
-        document.getElementById('counter').innerHTML = newCount;
+        document.getElementById("counter").innerHTML = newCount;
 
         // Communicate with content script of
         // active tab by sending a message
-        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           const tab = tabs[0];
 
           chrome.tabs.sendMessage(
             tab.id,
             {
-              type: 'COUNT',
+              type: "COUNT",
               payload: {
                 count: newCount,
               },
             },
-            response => {
-              console.log('Current count value passed to contentScript file');
+            (response) => {
+              console.log("Current count value passed to contentScript file");
             }
           );
         });
@@ -83,8 +83,8 @@ import './popup.css';
 
   function restoreCounter() {
     // Restore count value
-    counterStorage.get(count => {
-      if (typeof count === 'undefined') {
+    counterStorage.get((count) => {
+      if (typeof count === "undefined") {
         // Set counter value as 0
         counterStorage.set(0, () => {
           setupCounter(0);
@@ -95,17 +95,17 @@ import './popup.css';
     });
   }
 
-  document.addEventListener('DOMContentLoaded', restoreCounter);
+  document.addEventListener("DOMContentLoaded", restoreCounter);
 
   // Communicate with background file by sending a message
   chrome.runtime.sendMessage(
     {
-      type: 'GREETINGS',
+      type: "GREETINGS",
       payload: {
-        message: 'Hello, my name is Pop. I am from Popup.',
+        message: "Hello, my name is Pop. I am from Popup.",
       },
     },
-    response => {
+    (response) => {
       console.log(response.message);
     }
   );

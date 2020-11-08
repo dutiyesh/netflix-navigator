@@ -14,4 +14,3 @@ My Chrome Extension
 ## Contribution
 
 Suggestions and pull requests are welcomed!.
-
