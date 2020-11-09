@@ -112,6 +112,10 @@ body {
   text-align: right;
 }
 
+.line-height-1 {
+  line-height: 1;
+}
+
 /* button */
 .btn {
   padding: 8px 20px;
@@ -302,6 +306,17 @@ body {
 /* featured */
 .featured {
   background-color: #f8f8fb;
+}
+
+.ph-badge {
+  display: inline-block;
+}
+
+.ph-badge:hover {
+  -webkit-transform: scale(1.02);
+  transform: scale(1.02);
+  -webkit-transition: transform 0.1s linear;
+  transition: transform 0.1s linear;
 }
 
 /* feature */
