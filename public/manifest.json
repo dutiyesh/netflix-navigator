@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Netflix Navigator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Browse unlimited Netflix TV Shows and Movies easily with your Keyboard Arrow Keys.",
   "icons": {
     "16": "icons/icon_16.png",
