@@ -1,55 +1,77 @@
 "use strict";
 
-interface Window {
-  _gaq: any;
+import storage from "./utils/storage";
+
+function generateCId(): string {
+  const cid =
+    Math.floor(Math.random() * (999999999 - 100000000 + 1)) + 100000000;
+  const time = Math.floor(new Date().getTime() / 1000);
+  const uid = `${cid}.${time}`;
+
+  return uid;
 }
 
-let pendingTrackingData = [
-  ["_setAccount", "UA-182345827-1"],
-  ["_trackPageview"],
-];
+async function getCId(): Promise<string> {
+  const result = await storage.get(["cid"]);
 
-(function () {
-  var ga = document.createElement("script");
-  ga.type = "text/javascript";
-  ga.async = true;
-  ga.src = "https://ssl.google-analytics.com/ga.js";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode!.insertBefore(ga, s);
-})();
+  if (typeof result.cid === "undefined") {
+    const cid = generateCId();
 
-interface TrackingData {
-  category: string;
-  action: string;
-  label: string;
+    await storage.set("cid", cid);
+    return cid;
+  } else {
+    return result.cid;
+  }
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request) => {
   if (request.type === "TRACK") {
-    const { data } = request.payload;
+    const { data, commonData } = request.payload;
 
-    if (typeof window._gaq !== "undefined") {
-      if (pendingTrackingData.length !== 0) {
-        pendingTrackingData.forEach((data: string[]) => {
-          window._gaq.push(data);
-        });
+    getCId().then((cid) => {
+      const uid = cid.split(".")[0];
 
-        pendingTrackingData = [];
-      }
-
-      data.forEach((d: TrackingData) => {
-        window._gaq.push(["_trackEvent", d.category, d.action, d.label]);
+      const eventData = data.map((d: any) => {
+        return {
+          name: d.name,
+          params: {
+            ...d.params,
+            ...commonData,
+            event_category: d.category,
+            event_environment:
+              process.env.NODE_ENV !== "production"
+                ? "development"
+                : "production",
+            event_timezone:
+              Intl.DateTimeFormat().resolvedOptions().timeZone || "timezone",
+            user_id: uid,
+            engagement_time_msec: "100",
+          },
+        };
       });
-    } else {
-      data.forEach((d: TrackingData) => {
-        pendingTrackingData.push([
-          "_trackEvent",
-          d.category,
-          d.action,
-          d.label,
-        ]);
-      });
-    }
+
+      fetch(
+        "https://www.google-analytics.com/mp/collect?measurement_id=G-C4E8JBRFDF&api_secret=nrA3ydtxQXuksehZynyN5w",
+        {
+          method: "POST",
+          mode: "no-cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          body: JSON.stringify({
+            client_id: cid,
+            user_id: uid,
+            events: eventData,
+          }),
+        }
+      );
+    });
+
+    return true;
   }
 });
 

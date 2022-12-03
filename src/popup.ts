@@ -24,5 +24,5 @@ function setupClickableElements() {
 
 document.addEventListener("DOMContentLoaded", () => {
   setupClickableElements();
-  trackEvent("popup", "view");
+  trackEvent("popup_view", "popup");
 });

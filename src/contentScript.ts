@@ -13,42 +13,50 @@ tinykeys(window, {
     event.preventDefault();
 
     netflixNavigator.focusRow("down");
-    trackEvent("arrow", "click", "down");
+    trackEvent("arrow_click", "content_script", {
+      event_arrow_key: "down",
+    });
   },
 
   ArrowUp: function (event: KeyboardEvent) {
     event.preventDefault();
 
     netflixNavigator.focusRow("up");
-    trackEvent("arrow", "click", "up");
+    trackEvent("arrow_click", "content_script", {
+      event_arrow_key: "up",
+    });
   },
 
   ArrowRight: function (event) {
     event.preventDefault();
 
     netflixNavigator.navigateSlider("right");
-    trackEvent("arrow", "click", "right");
+    trackEvent("arrow_click", "content_script", {
+      event_arrow_key: "right",
+    });
   },
 
   ArrowLeft: function (event) {
     event.preventDefault();
 
     netflixNavigator.navigateSlider("left");
-    trackEvent("arrow", "click", "left");
+    trackEvent("arrow_click", "content_script", {
+      event_arrow_key: "left",
+    });
   },
 
   S: function () {
     netflixNavigator.openSearch();
-    trackEvent("search", "click");
+    trackEvent("search_click", "content_script");
   },
 
   Enter: function () {
     if (netflixNavigator.isSliderItemInFocus()) {
-      trackEvent("detail-modal", "click");
+      trackEvent("detail_modal_click", "content_script");
     }
   },
 });
 
 window.addEventListener("load", () => {
-  trackEvent("content-page", "view");
+  trackEvent("content_page_load", "content_script");
 });

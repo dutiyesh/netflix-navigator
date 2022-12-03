@@ -28,7 +28,7 @@ class NetflixNavigator {
   isSliderControlButtonClickInProgress: boolean;
 
   // mini preview modal
-  miniPreviewModalTimerId: number | undefined;
+  miniPreviewModalTimerId: ReturnType<typeof window.setTimeout> | undefined;
   miniPreviewModalAutoplayDelay: number;
   miniPreviewModalObserver: MutationObserver;
   isMiniPreviewModalActive: boolean;
@@ -208,8 +208,9 @@ class NetflixNavigator {
         return defaultColumnCount;
       }
 
-      const sliderItemCount = rows[0].querySelectorAll(".slider .slider-item")
-        .length;
+      const sliderItemCount = rows[0].querySelectorAll(
+        ".slider .slider-item"
+      ).length;
 
       return sliderItemCount !== 0 ? sliderItemCount : defaultColumnCount;
     } else {
@@ -237,9 +238,8 @@ class NetflixNavigator {
           continue;
         }
 
-        const outsideViewportSliderItem = slider.getElementsByClassName(
-          "slider-item-"
-        )[0];
+        const outsideViewportSliderItem =
+          slider.getElementsByClassName("slider-item-")[0];
         if (!outsideViewportSliderItem) {
           continue;
         }
@@ -434,9 +434,11 @@ class NetflixNavigator {
     if (isFirst) {
       const topPosition =
         (row as HTMLElement).offsetTop -
-        ((document.getElementsByClassName(
-          "pinning-header-container"
-        )[0] as HTMLElement).offsetHeight +
+        ((
+          document.getElementsByClassName(
+            "pinning-header-container"
+          )[0] as HTMLElement
+        ).offsetHeight +
           10);
 
       window.scrollTo(0, topPosition);
@@ -471,9 +473,11 @@ class NetflixNavigator {
 
         const topPosition =
           (rowToScrollTo as HTMLElement).offsetTop -
-          ((document.getElementsByClassName(
-            "pinning-header-container"
-          )[0] as HTMLElement).offsetHeight +
+          ((
+            document.getElementsByClassName(
+              "pinning-header-container"
+            )[0] as HTMLElement
+          ).offsetHeight +
             10) *
             (this.rowClassName === "rowContainer" ? -1 : 1);
 
@@ -502,9 +506,8 @@ class NetflixNavigator {
     )[0];
 
     if (billboardRow) {
-      const billboardDetails = billboardRow.getElementsByClassName(
-        "logo-and-text"
-      )[0];
+      const billboardDetails =
+        billboardRow.getElementsByClassName("logo-and-text")[0];
 
       if (billboardDetails && isInViewport(billboardDetails)) {
         return true;
@@ -620,9 +623,8 @@ class NetflixNavigator {
       return false;
     }
 
-    const outsideViewportSliderItem = slider.getElementsByClassName(
-      "slider-item-"
-    )[0];
+    const outsideViewportSliderItem =
+      slider.getElementsByClassName("slider-item-")[0];
 
     if (!outsideViewportSliderItem) {
       return false;
@@ -704,11 +706,12 @@ class NetflixNavigator {
     });
   }
 
-  _getSiblingSliderItemIndex(direction = "right"): Promise<number> {
+  _getSiblingSliderItemIndex(direction = "right"): Promise<number | void> {
     return new Promise((resolve, reject) => {
-      const currentSliderItemInFocus = this.currentActiveRow!.getElementsByClassName(
-        this.activeSliderItemClassName
-      )[0];
+      const currentSliderItemInFocus =
+        this.currentActiveRow!.getElementsByClassName(
+          this.activeSliderItemClassName
+        )[0];
 
       if (currentSliderItemInFocus) {
         if (direction === "left") {
@@ -747,22 +750,20 @@ class NetflixNavigator {
           return;
         }
 
-        const slider = this.currentActiveRow!.getElementsByClassName(
-          "slider"
-        )[0];
-        const sliderContent = slider!.getElementsByClassName(
-          "sliderContent"
-        )[0];
+        const slider =
+          this.currentActiveRow!.getElementsByClassName("slider")[0];
+        const sliderContent =
+          slider!.getElementsByClassName("sliderContent")[0];
         const lastActiveSliderItem = slider!.getElementsByClassName(
           this.activeSliderItemClassName
         )[0]!;
 
-        const lastActiveSliderCardItemDetails = this._getSliderItemCardDetails(
-          lastActiveSliderItem
-        );
+        const lastActiveSliderCardItemDetails =
+          this._getSliderItemCardDetails(lastActiveSliderItem);
 
         const _this = this;
-        let timerId: number | undefined = undefined;
+        let timerId: ReturnType<typeof window.setTimeout> | undefined =
+          undefined;
 
         function handleControlButtonTransitionEnd(event: Event) {
           if (event.target !== sliderContent) {
@@ -782,14 +783,13 @@ class NetflixNavigator {
               }"]`
             );
 
-            const sliderItemCardInViewport = Array.from(
-              sliderItemCards
-            ).find((card) => isInViewport(card));
+            const sliderItemCardInViewport = Array.from(sliderItemCards).find(
+              (card) => isInViewport(card)
+            );
 
             if (sliderItemCardInViewport) {
-              const sliderItem = sliderItemCardInViewport.closest(
-                ".slider-item"
-              )!;
+              const sliderItem =
+                sliderItemCardInViewport.closest(".slider-item")!;
               const sliderItemIndex = _this._getSliderItemIndex(sliderItem);
 
               siblingIndex = sliderItemIndex;
@@ -821,7 +821,9 @@ class NetflixNavigator {
           controlButton.click();
         }
         this.isSliderControlButtonClickInProgress = true;
-        trackEvent("slider-controls", "click", direction);
+        trackEvent("slider_controls_click", "content_script", {
+          event_slider_key: direction,
+        });
       } else {
         resolve(this.activeColumnIndex + (direction === "left" ? -1 : 1));
 
@@ -936,7 +938,7 @@ class NetflixNavigator {
       });
 
       card.dispatchEvent(mouseoverEvent);
-      trackEvent("mini-modal", "view");
+      trackEvent("mini_modal_view", "content_script");
     }, this.miniPreviewModalAutoplayDelay);
   }
 
