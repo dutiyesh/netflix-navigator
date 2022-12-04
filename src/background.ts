@@ -44,6 +44,8 @@ chrome.runtime.onMessage.addListener((request) => {
                 : "production",
             event_timezone:
               Intl.DateTimeFormat().resolvedOptions().timeZone || "timezone",
+            event_uid: uid,
+            event_uid_install: cid.split(".")[1],
             user_id: uid,
             engagement_time_msec: "100",
           },
